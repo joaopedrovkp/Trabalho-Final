@@ -4,6 +4,7 @@ const campoPrioridade = document.querySelector("#prioridade");
 const campoCategoria = document.querySelector("#categoria");
 const botaoEnviar = formTarefa.querySelector('button[type="submit"]');
 const botaoCancelarEdicao = document.querySelector("#cancelar-edicao");
+const avisoPersistencia = document.querySelector("#aviso-persistencia");
 const listaTarefas = document.querySelector("#lista-tarefas");
 const contador = document.querySelector("#contador");
 const estadoVazio = document.querySelector("#estado-vazio");
@@ -14,6 +15,7 @@ let tarefas = [];
 let filtroAtual = "todas";
 let proximoId = 1;
 let idEmEdicao = null;
+const chaveTarefas = "lista-de-tarefas";
 
 const nomesPrioridade = {
     alta: "Alta",
@@ -29,6 +31,76 @@ const nomesCategoria = {
     saude: "Saúde",
     outros: "Outros"
 };
+
+function mostrarAvisoPersistencia(mensagem) {
+    avisoPersistencia.textContent = mensagem;
+    avisoPersistencia.hidden = false;
+}
+
+function carregarTarefas() {
+    let dadosSalvos;
+    try {
+        dadosSalvos = localStorage.getItem(chaveTarefas);
+    } catch (erro) {
+        mostrarAvisoPersistencia("Não foi possível acessar o armazenamento do navegador. As tarefas existentes não foram carregadas.");
+        return [];
+    }
+
+    if (dadosSalvos === null) return [];
+
+    let tarefasSalvas;
+    try {
+        tarefasSalvas = JSON.parse(dadosSalvos);
+    } catch (erro) {
+        if (!(erro instanceof SyntaxError)) throw erro;
+        mostrarAvisoPersistencia("Os dados salvos das tarefas estão inválidos e não puderam ser carregados.");
+        return [];
+    }
+
+    if (!Array.isArray(tarefasSalvas)) {
+        mostrarAvisoPersistencia("Os dados salvos das tarefas estão em um formato inválido e não puderam ser carregados.");
+        return [];
+    }
+
+    const ids = new Set();
+    const tarefasValidas = [];
+    tarefasSalvas.forEach((tarefa) => {
+        const prioridadeValida =
+            tarefa && Object.prototype.hasOwnProperty.call(nomesPrioridade, tarefa.prioridade);
+        const categoriaValida =
+            tarefa && Object.prototype.hasOwnProperty.call(nomesCategoria, tarefa.categoria);
+        const tarefaValida =
+            tarefa &&
+            Number.isSafeInteger(tarefa.id) &&
+            tarefa.id > 0 &&
+            !ids.has(tarefa.id) &&
+            typeof tarefa.texto === "string" &&
+            tarefa.texto.trim().length > 0 &&
+            tarefa.texto.length <= 120 &&
+            prioridadeValida &&
+            categoriaValida &&
+            typeof tarefa.concluida === "boolean";
+
+        if (!tarefaValida) return;
+
+        ids.add(tarefa.id);
+        tarefasValidas.push(tarefa);
+    });
+
+    if (tarefasValidas.length !== tarefasSalvas.length) {
+        mostrarAvisoPersistencia("Algumas tarefas salvas estavam inválidas e foram ignoradas.");
+    }
+
+    return tarefasValidas;
+}
+
+function salvarTarefas() {
+    try {
+        localStorage.setItem(chaveTarefas, JSON.stringify(tarefas));
+    } catch (erro) {
+        mostrarAvisoPersistencia("Não foi possível salvar as alterações no navegador. Elas podem ser perdidas ao fechar a página.");
+    }
+}
 
 function encerrarEdicao() {
     idEmEdicao = null;
@@ -60,6 +132,7 @@ function renderizarTarefas() {
         );
         checkbox.addEventListener("change", () => {
             tarefa.concluida = checkbox.checked;
+            salvarTarefas();
             renderizarTarefas();
         });
 
@@ -112,6 +185,7 @@ function renderizarTarefas() {
             if (idEmEdicao === tarefa.id) {
                 encerrarEdicao();
             }
+            salvarTarefas();
             renderizarTarefas();
         });
 
@@ -168,6 +242,8 @@ formTarefa.addEventListener("submit", (evento) => {
         });
     }
 
+    salvarTarefas();
+
     filtroAtual = "todas";
     filtros.forEach((filtro) => {
         const ativo = filtro.dataset.filtro === filtroAtual;
@@ -202,7 +278,10 @@ botaoLimpar.addEventListener("click", () => {
     if (idEmEdicao !== null && !tarefas.some((tarefa) => tarefa.id === idEmEdicao)) {
         encerrarEdicao();
     }
+    salvarTarefas();
     renderizarTarefas();
 });
 
+tarefas = carregarTarefas();
+proximoId = tarefas.reduce((maiorId, tarefa) => Math.max(maiorId, tarefa.id), 0) + 1;
 renderizarTarefas();

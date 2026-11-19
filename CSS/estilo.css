@@ -70,6 +70,21 @@ h1 {
     line-height: 1.6;
 }
 
+.aviso-persistencia {
+    margin: -12px 0 24px;
+    padding: 12px 14px;
+    border: 1px solid #d7aaa2;
+    border-radius: 8px;
+    background: #f8eae6;
+    color: #713027;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.aviso-persistencia[hidden] {
+    display: none;
+}
+
 .formulario label {
     display: block;
     margin-bottom: 10px;
