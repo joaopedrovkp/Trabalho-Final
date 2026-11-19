@@ -1,12 +1,56 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aplicação Trabalho Final</title>
+    <title>Lista de tarefas</title>
     <link rel="stylesheet" href="CSS/estilo.css">
+    <script src="JS/app.js" defer></script>
 </head>
 <body>
-    
+    <main class="app">
+        <header class="cabecalho">
+            <p class="identificador">Lista de Tarefas</p>
+            <h1>Faça seu planejamento.</h1>
+            <p class="subtitulo">Comece a se organizar. Adicione suas tarefas e acompanhe seu progresso.</p>
+        </header>
+
+        <form class="formulario" id="form-tarefa">
+            <label for="nova-tarefa">O que você precisa fazer?</label>
+            <div class="entrada">
+                <input
+                    id="nova-tarefa"
+                    name="tarefa"
+                    type="text"
+                    placeholder="Ex.: estudar para a prova"
+                    maxlength="120"
+                    autocomplete="off"
+                    required
+                >
+                <button class="botao-adicionar" type="submit">Adicionar tarefa</button>
+            </div>
+        </form>
+
+        <section class="painel-tarefas" aria-labelledby="titulo-tarefas">
+            <div class="resumo">
+                <div>
+                    <h2 id="titulo-tarefas">Minhas tarefas</h2>
+                    <p id="contador" aria-live="polite">Nenhuma tarefa</p>
+                </div>
+                <button class="botao-limpar" id="limpar-concluidas" type="button" disabled>
+                    Limpar concluídas
+                </button>
+            </div>
+
+            <nav class="filtros" aria-label="Filtrar tarefas">
+                <button class="filtro ativo" type="button" data-filtro="todas" aria-pressed="true">Todas</button>
+                <button class="filtro" type="button" data-filtro="pendentes" aria-pressed="false">Pendentes</button>
+                <button class="filtro" type="button" data-filtro="concluidas" aria-pressed="false">Concluídas</button>
+            </nav>
+
+            <ul class="lista-tarefas" id="lista-tarefas"></ul>
+            <p class="estado-vazio" id="estado-vazio">Sua lista está vazia. Adicione uma tarefa para começar.</p>
+        </section>
+    </main>
 </body>
 </html>
