@@ -135,6 +135,19 @@ h1 {
     background: var(--cor-principal-hover);
 }
 
+.botao-cancelar {
+    padding: 13px 14px;
+    border: 1px solid var(--cor-borda);
+    border-radius: 8px;
+    background: var(--cor-superficie);
+    color: var(--cor-texto-suave);
+    cursor: pointer;
+}
+
+.botao-cancelar:hover {
+    background: var(--cor-fundo);
+}
+
 .painel-tarefas {
     margin-top: 36px;
 }
@@ -291,6 +304,26 @@ h1 {
     cursor: pointer;
 }
 
+.acoes-tarefa {
+    display: flex;
+    flex: 0 0 auto;
+    gap: 4px;
+}
+
+.botao-editar {
+    padding: 6px 9px;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--cor-principal);
+    font-size: 0.82rem;
+    cursor: pointer;
+}
+
+.botao-editar:hover {
+    background: #f2ebe5;
+}
+
 .botao-remover:hover {
     background: #f8eae6;
     color: #87372e;
@@ -341,6 +374,10 @@ select:focus-visible {
     }
 
     .botao-adicionar {
+        width: 100%;
+    }
+
+    .botao-cancelar {
         width: 100%;
     }
 }

@@ -2,6 +2,8 @@ const formTarefa = document.querySelector("#form-tarefa");
 const campoTarefa = document.querySelector("#nova-tarefa");
 const campoPrioridade = document.querySelector("#prioridade");
 const campoCategoria = document.querySelector("#categoria");
+const botaoEnviar = formTarefa.querySelector('button[type="submit"]');
+const botaoCancelarEdicao = document.querySelector("#cancelar-edicao");
 const listaTarefas = document.querySelector("#lista-tarefas");
 const contador = document.querySelector("#contador");
 const estadoVazio = document.querySelector("#estado-vazio");
@@ -11,6 +13,7 @@ const filtros = document.querySelectorAll(".filtro");
 let tarefas = [];
 let filtroAtual = "todas";
 let proximoId = 1;
+let idEmEdicao = null;
 
 const nomesPrioridade = {
     alta: "Alta",
@@ -26,6 +29,13 @@ const nomesCategoria = {
     saude: "Saúde",
     outros: "Outros"
 };
+
+function encerrarEdicao() {
+    idEmEdicao = null;
+    formTarefa.reset();
+    botaoEnviar.textContent = "Adicionar tarefa";
+    botaoCancelarEdicao.hidden = true;
+}
 
 function renderizarTarefas() {
     const tarefasVisiveis = tarefas.filter((tarefa) => {
@@ -74,6 +84,24 @@ function renderizarTarefas() {
         detalhes.append(prioridade, categoria);
         conteudo.append(descricao, detalhes);
 
+        const acoes = document.createElement("div");
+        acoes.className = "acoes-tarefa";
+
+        const botaoEditar = document.createElement("button");
+        botaoEditar.type = "button";
+        botaoEditar.className = "botao-editar";
+        botaoEditar.textContent = "Editar";
+        botaoEditar.setAttribute("aria-label", `Editar tarefa: ${tarefa.texto}`);
+        botaoEditar.addEventListener("click", () => {
+            idEmEdicao = tarefa.id;
+            campoTarefa.value = tarefa.texto;
+            campoPrioridade.value = tarefa.prioridade;
+            campoCategoria.value = tarefa.categoria;
+            botaoEnviar.textContent = "Salvar alterações";
+            botaoCancelarEdicao.hidden = false;
+            campoTarefa.focus();
+        });
+
         const botaoRemover = document.createElement("button");
         botaoRemover.type = "button";
         botaoRemover.className = "botao-remover";
@@ -81,10 +109,14 @@ function renderizarTarefas() {
         botaoRemover.setAttribute("aria-label", `Excluir tarefa: ${tarefa.texto}`);
         botaoRemover.addEventListener("click", () => {
             tarefas = tarefas.filter((itemTarefa) => itemTarefa.id !== tarefa.id);
+            if (idEmEdicao === tarefa.id) {
+                encerrarEdicao();
+            }
             renderizarTarefas();
         });
 
-        item.append(checkbox, conteudo, botaoRemover);
+        acoes.append(botaoEditar, botaoRemover);
+        item.append(checkbox, conteudo, acoes);
         listaTarefas.append(item);
     });
 
@@ -115,13 +147,26 @@ formTarefa.addEventListener("submit", (evento) => {
         return;
     }
 
-    tarefas.push({
-        id: proximoId++,
-        texto,
-        prioridade: campoPrioridade.value,
-        categoria: campoCategoria.value,
-        concluida: false
-    });
+    if (idEmEdicao !== null) {
+        const tarefaEditada = tarefas.find((tarefa) => tarefa.id === idEmEdicao);
+        if (!tarefaEditada) {
+            encerrarEdicao();
+            renderizarTarefas();
+            return;
+        }
+
+        tarefaEditada.texto = texto;
+        tarefaEditada.prioridade = campoPrioridade.value;
+        tarefaEditada.categoria = campoCategoria.value;
+    } else {
+        tarefas.push({
+            id: proximoId++,
+            texto,
+            prioridade: campoPrioridade.value,
+            categoria: campoCategoria.value,
+            concluida: false
+        });
+    }
 
     filtroAtual = "todas";
     filtros.forEach((filtro) => {
@@ -130,8 +175,13 @@ formTarefa.addEventListener("submit", (evento) => {
         filtro.setAttribute("aria-pressed", String(ativo));
     });
 
-    formTarefa.reset();
+    encerrarEdicao();
     renderizarTarefas();
+    campoTarefa.focus();
+});
+
+botaoCancelarEdicao.addEventListener("click", () => {
+    encerrarEdicao();
     campoTarefa.focus();
 });
 
@@ -149,6 +199,9 @@ filtros.forEach((filtro) => {
 
 botaoLimpar.addEventListener("click", () => {
     tarefas = tarefas.filter((tarefa) => !tarefa.concluida);
+    if (idEmEdicao !== null && !tarefas.some((tarefa) => tarefa.id === idEmEdicao)) {
+        encerrarEdicao();
+    }
     renderizarTarefas();
 });
 
