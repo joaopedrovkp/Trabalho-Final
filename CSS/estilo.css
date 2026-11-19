@@ -23,7 +23,8 @@ body {
 }
 
 button,
-input {
+input,
+select {
     font: inherit;
 }
 
@@ -85,6 +86,29 @@ h1 {
     min-width: 0;
     flex: 1;
     padding: 13px 14px;
+    border: 1px solid var(--cor-borda);
+    border-radius: 8px;
+    background: var(--cor-superficie);
+    color: inherit;
+}
+
+.opcoes-tarefa {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.campo-opcao label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.campo-opcao select {
+    width: 100%;
+    padding: 11px 12px;
     border: 1px solid var(--cor-borda);
     border-radius: 8px;
     background: var(--cor-superficie);
@@ -207,10 +231,49 @@ h1 {
 }
 
 .texto-tarefa {
-    min-width: 0;
-    flex: 1;
     overflow-wrap: anywhere;
     line-height: 1.45;
+}
+
+.conteudo-tarefa {
+    min-width: 0;
+    flex: 1;
+}
+
+.detalhes-tarefa {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 7px;
+}
+
+.etiqueta {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 8px;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 700;
+}
+
+.etiqueta-categoria {
+    background: #f2ebe5;
+    color: #66544a;
+}
+
+.prioridade-alta {
+    background: #f8eae6;
+    color: #87372e;
+}
+
+.prioridade-media {
+    background: #f4eddf;
+    color: #765a2c;
+}
+
+.prioridade-baixa {
+    background: #e8f0ed;
+    color: #426d63;
 }
 
 .item-tarefa.concluida .texto-tarefa {
@@ -245,7 +308,8 @@ h1 {
 }
 
 button:focus-visible,
-input:focus-visible {
+input:focus-visible,
+select:focus-visible {
     outline: 3px solid #b9855c;
     outline-offset: 3px;
 }
@@ -295,6 +359,10 @@ input:focus-visible {
     .filtro {
         padding: 9px 6px;
         font-size: 0.8rem;
+    }
+
+    .opcoes-tarefa {
+        grid-template-columns: 1fr;
     }
 }
 

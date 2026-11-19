@@ -1,5 +1,7 @@
 const formTarefa = document.querySelector("#form-tarefa");
 const campoTarefa = document.querySelector("#nova-tarefa");
+const campoPrioridade = document.querySelector("#prioridade");
+const campoCategoria = document.querySelector("#categoria");
 const listaTarefas = document.querySelector("#lista-tarefas");
 const contador = document.querySelector("#contador");
 const estadoVazio = document.querySelector("#estado-vazio");
@@ -9,6 +11,21 @@ const filtros = document.querySelectorAll(".filtro");
 let tarefas = [];
 let filtroAtual = "todas";
 let proximoId = 1;
+
+const nomesPrioridade = {
+    alta: "Alta",
+    media: "Média",
+    baixa: "Baixa"
+};
+
+const nomesCategoria = {
+    pessoal: "Pessoal",
+    trabalho: "Trabalho",
+    estudos: "Estudos",
+    casa: "Casa",
+    saude: "Saúde",
+    outros: "Outros"
+};
 
 function renderizarTarefas() {
     const tarefasVisiveis = tarefas.filter((tarefa) => {
@@ -36,9 +53,26 @@ function renderizarTarefas() {
             renderizarTarefas();
         });
 
+        const conteudo = document.createElement("div");
+        conteudo.className = "conteudo-tarefa";
+
         const descricao = document.createElement("span");
         descricao.className = "texto-tarefa";
         descricao.textContent = tarefa.texto;
+
+        const detalhes = document.createElement("div");
+        detalhes.className = "detalhes-tarefa";
+
+        const prioridade = document.createElement("span");
+        prioridade.className = `etiqueta prioridade-${tarefa.prioridade}`;
+        prioridade.textContent = `Prioridade: ${nomesPrioridade[tarefa.prioridade]}`;
+
+        const categoria = document.createElement("span");
+        categoria.className = "etiqueta etiqueta-categoria";
+        categoria.textContent = `Categoria: ${nomesCategoria[tarefa.categoria]}`;
+
+        detalhes.append(prioridade, categoria);
+        conteudo.append(descricao, detalhes);
 
         const botaoRemover = document.createElement("button");
         botaoRemover.type = "button";
@@ -50,7 +84,7 @@ function renderizarTarefas() {
             renderizarTarefas();
         });
 
-        item.append(checkbox, descricao, botaoRemover);
+        item.append(checkbox, conteudo, botaoRemover);
         listaTarefas.append(item);
     });
 
@@ -84,6 +118,8 @@ formTarefa.addEventListener("submit", (evento) => {
     tarefas.push({
         id: proximoId++,
         texto,
+        prioridade: campoPrioridade.value,
+        categoria: campoCategoria.value,
         concluida: false
     });
 

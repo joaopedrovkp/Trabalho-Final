@@ -29,6 +29,27 @@
                 >
                 <button class="botao-adicionar" type="submit">Adicionar tarefa</button>
             </div>
+            <div class="opcoes-tarefa">
+                <div class="campo-opcao">
+                    <label for="prioridade">Prioridade</label>
+                    <select id="prioridade" name="prioridade">
+                        <option value="alta">Alta</option>
+                        <option value="media" selected>Média</option>
+                        <option value="baixa">Baixa</option>
+                    </select>
+                </div>
+                <div class="campo-opcao">
+                    <label for="categoria">Categoria</label>
+                    <select id="categoria" name="categoria">
+                        <option value="pessoal" selected>Pessoal</option>
+                        <option value="trabalho">Trabalho</option>
+                        <option value="estudos">Estudos</option>
+                        <option value="casa">Casa</option>
+                        <option value="saude">Saúde</option>
+                        <option value="outros">Outros</option>
+                    </select>
+                </div>
+            </div>
         </form>
 
         <section class="painel-tarefas" aria-labelledby="titulo-tarefas">
